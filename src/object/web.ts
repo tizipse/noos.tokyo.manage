@@ -13,7 +13,7 @@ export const Menus: Record<string, string> = {
   styling: 'STYLING',
   spa: 'SPA',
   treatment: 'TREATMENT',
-  hair_color: 'HAIR COLOR',
+  color: 'COLOR',
   perm: 'PERM',
   straight_perm: 'STRAIGHT PERM',
 };

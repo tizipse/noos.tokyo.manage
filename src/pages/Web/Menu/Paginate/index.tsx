@@ -140,7 +140,7 @@ const Paginate: React.FC = () => {
                 {label: 'STYLING', value: 'styling'},
                 {label: 'SPA', value: 'spa'},
                 {label: 'TREATMENT', value: 'treatment'},
-                {label: 'HAIR COLOR', value: 'hair_color'},
+                {label: 'COLOR', value: 'color'},
                 {label: 'PERM', value: 'perm'},
                 {label: 'STRAIGHT PERM', value: 'straight_perm'},
               ]}

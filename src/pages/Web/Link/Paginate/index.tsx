@@ -131,7 +131,7 @@ const Paginate: React.FC = () => {
             <Tooltip title="刷新">
               <Button type="primary" icon={<RedoOutlined/>} onClick={toPaginate} loading={load}/>
             </Tooltip>
-            <Access accessible={access.page('web.recruit.create')}>
+            <Access accessible={access.page('web.link.create')}>
               <Tooltip title="创建">
                 <Button type="primary" icon={<FormOutlined/>} onClick={onCreate}/>
               </Tooltip>
@@ -165,7 +165,7 @@ const Paginate: React.FC = () => {
             title="启用"
             align="center"
             render={(record: APIWebLinks.Data) => (
-              <Access accessible={access.page('web.recruit.enable')}
+              <Access accessible={access.page('web.link.enable')}
                       fallback={<Enable is_enable={record.is_enable}/>}>
                 <Switch
                   size="small"
@@ -181,12 +181,12 @@ const Paginate: React.FC = () => {
             width={100}
             render={(record: APIWebLinks.Data) => (
               <>
-                <Access accessible={access.page('web.recruit.update')}>
+                <Access accessible={access.page('web.link.update')}>
                   <Button type="link" onClick={() => onUpdate(record)}>
                     编辑
                   </Button>
                 </Access>
-                <Access accessible={access.page('web.recruit.delete')}>
+                <Access accessible={access.page('web.link.delete')}>
                   <Popconfirm
                     title="确定要删除该数据?"
                     placement="leftTop"

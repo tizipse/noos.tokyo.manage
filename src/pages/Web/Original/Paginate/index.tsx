@@ -1,12 +1,12 @@
-import {Access, useModel, useAccess} from 'umi';
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Image, notification, Popconfirm, Select, Space, Switch, Table, Tag, Tooltip} from 'antd';
+import {Access, useAccess, useModel} from 'umi';
+import {Button, Card, notification, Popconfirm, Space, Switch, Table, Tag, Tooltip} from 'antd';
 import {FormOutlined, RedoOutlined} from '@ant-design/icons';
-import Constants from '@/utils/Constants';
-import Editor from '@/pages/Web/Banner/Editor';
+import dayjs from 'dayjs';
 import Enable from '@/components/Basic/Enable';
+import Editor from '@/pages/Web/Original/Editor';
 import {doDelete, doEnable, doPaginate} from './service';
-import {Clients, Targets} from "@/object/web";
+import Constants from '@/utils/Constants';
 import Loop from '@/utils/Loop';
 
 const Paginate: React.FC = () => {
@@ -14,16 +14,16 @@ const Paginate: React.FC = () => {
   const access = useAccess();
   const {initialState} = useModel('@@initialState');
 
-  const [search, setSearch] = useState<APIWebBanners.Search>();
-  const [editor, setEditor] = useState<APIWebBanners.Data | undefined>();
   const [load, setLoad] = useState(false);
-  const [visible, setVisible] = useState<APIWebBanners.Visible>({});
-  const [data, setData] = useState<APIData.Paginate<APIWebBanners.Data>>();
+  const [search, setSearch] = useState<APIWebOriginals.Search>({});
+  const [editor, setEditor] = useState<APIWebOriginals.Data | undefined>();
+  const [visible, setVisible] = useState<APIWebOriginals.Visible>({});
+  const [data, setData] = useState<APIData.Paginate<APIWebOriginals.Data>>();
 
   const toPaginate = () => {
     setLoad(true);
     doPaginate(search)
-      .then(response => {
+      .then((response: APIResponse.Paginate<APIWebOriginals.Data>) => {
         if (response.code === Constants.Success) {
           setData(response.data);
         }
@@ -31,8 +31,7 @@ const Paginate: React.FC = () => {
       .finally(() => setLoad(false));
   };
 
-  const onDelete = (record: APIWebBanners.Data) => {
-
+  const onDelete = (record: APIWebOriginals.Data) => {
     if (data?.data) {
       const temp = {...data};
       if (temp.data) {
@@ -42,7 +41,7 @@ const Paginate: React.FC = () => {
     }
 
     doDelete(record.id)
-      .then(response => {
+      .then((response: APIResponse.Response<any>) => {
         if (response.code !== Constants.Success) {
           notification.error({message: response.message});
         } else {
@@ -61,8 +60,8 @@ const Paginate: React.FC = () => {
       });
   };
 
-  const onEnable = (record: APIWebBanners.Data) => {
-    if (data) {
+  const onEnable = (record: APIWebOriginals.Data) => {
+    if (data?.data) {
       const temp = {...data};
       if (temp.data) {
         Loop.ById(temp.data, record.id, (item) => (item.loading_enable = true));
@@ -70,17 +69,19 @@ const Paginate: React.FC = () => {
       setData(temp);
     }
 
-    const enable: APIRequest.Enable<number> = {id: record.id, is_enable: record.is_enable === 1 ? 2 : 1};
+    const enable: APIRequest.Enable<string> = {
+      id: record.id,
+      is_enable: record.is_enable === 1 ? 2 : 1,
+    };
 
     doEnable(enable)
-      .then(response => {
+      .then((response: APIResponse.Response<any>) => {
         if (response.code !== Constants.Success) {
           notification.error({message: response.message});
         } else {
-          notification.success({
-            message: `${enable.is_enable === 1 ? '启用' : '禁用'}成功！`,
-          });
-          if (data) {
+          notification.success({message: `${enable.is_enable === 1 ? '启用' : '禁用'}成功！`});
+
+          if (data?.data) {
             const temp = {...data};
             if (temp.data) {
               Loop.ById(temp.data, record.id, (item) => (item.is_enable = enable.is_enable));
@@ -90,7 +91,7 @@ const Paginate: React.FC = () => {
         }
       })
       .finally(() => {
-        if (data) {
+        if (data?.data) {
           const temp = {...data};
           if (temp.data) {
             Loop.ById(temp.data, record.id, (item) => (item.loading_enable = false));
@@ -105,7 +106,7 @@ const Paginate: React.FC = () => {
     setVisible({...visible, editor: true});
   };
 
-  const onUpdate = (record: APIWebBanners.Data) => {
+  const onUpdate = (record: APIWebOriginals.Data) => {
     setEditor(record);
     setVisible({...visible, editor: true});
   };
@@ -126,24 +127,13 @@ const Paginate: React.FC = () => {
   return (
     <>
       <Card
-        title="轮播列表"
+        title="产品列表"
         extra={
-          <Space size={[10, 10]} wrap>
-            <Select
-              style={{width: '90px'}}
-              allowClear
-              placeholder='客户端'
-              onChange={client => setSearch({...search, client})}
-              value={search?.client}
-              options={[
-                {label: '电脑端', value: 'pc'},
-                {label: '移动端', value: 'mobile'},
-              ]}
-            />
+          <Space size={[10, 10]}>
             <Tooltip title="刷新">
               <Button type="primary" icon={<RedoOutlined/>} onClick={toPaginate} loading={load}/>
             </Tooltip>
-            <Access accessible={access.page('web.banner.create')}>
+            <Access accessible={access.page('web.member.create')}>
               <Tooltip title="创建">
                 <Button type="primary" icon={<FormOutlined/>} onClick={onCreate}/>
               </Tooltip>
@@ -160,36 +150,10 @@ const Paginate: React.FC = () => {
             pageSize: data?.size,
             total: data?.total,
             showQuickJumper: false,
-            showSizeChanger: false,
-            onChange: (page) => setSearch({...search, page}),
+            onChange: (page) => setSearch({page}),
           }}
         >
           <Table.Column title="名称" dataIndex="name"/>
-          <Table.Column
-            title="图片"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Image src={record.picture} width='auto' height={50}/>
-            )}
-          />
-          <Table.Column
-            title="位置"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Tag color={Clients[record.client] ? Clients[record.client].color : initialState?.settings?.colorPrimary}>
-                {Clients[record.client] ? Clients[record.client].label : record.client}
-              </Tag>
-            )}
-          />
-          <Table.Column
-            title="打开"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Tag color={initialState?.settings?.colorPrimary}>
-                {Targets[record.target] ? Targets[record.target] : record.target}
-              </Tag>
-            )}
-          />
           <Table.Column
             title="序号"
             align="center"
@@ -200,9 +164,11 @@ const Paginate: React.FC = () => {
           <Table.Column
             title="启用"
             align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Access accessible={access.page('web.banner.enable')}
-                      fallback={<Enable is_enable={record.is_enable}/>}>
+            render={(record: APIWebOriginals.Data) => (
+              <Access
+                accessible={access.page('web.member.enable')}
+                fallback={<Enable is_enable={record.is_enable}/>}
+              >
                 <Switch
                   size="small"
                   checked={record.is_enable === 1}
@@ -213,16 +179,24 @@ const Paginate: React.FC = () => {
             )}
           />
           <Table.Column
+            title="创建时间"
+            align="center"
+            render={(record: APIWebOriginals.Data) =>
+              record.created_at && dayjs(record.created_at).format('YYYY/MM/DD')
+            }
+          />
+          <Table.Column
+            title="操作"
             align="center"
             width={100}
-            render={(record: APIWebBanners.Data) => (
+            render={(record: APIWebOriginals.Data) => (
               <>
-                <Access accessible={access.page('web.banner.update')}>
+                <Access accessible={access.page('web.member.update')}>
                   <Button type="link" onClick={() => onUpdate(record)}>
                     编辑
                   </Button>
                 </Access>
-                <Access accessible={access.page('web.banner.delete')}>
+                <Access accessible={access.page('web.member.delete')}>
                   <Popconfirm
                     title="确定要删除该数据?"
                     placement="leftTop"
@@ -238,12 +212,7 @@ const Paginate: React.FC = () => {
           />
         </Table>
       </Card>
-      <Editor
-        visible={visible.editor}
-        params={editor}
-        onSave={onSuccess}
-        onCancel={onCancel}
-      />
+      <Editor visible={visible.editor} params={editor} onSave={onSuccess} onCancel={onCancel}/>
     </>
   );
 };

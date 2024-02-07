@@ -1,12 +1,11 @@
 import {Access, useModel, useAccess} from 'umi';
 import React, {useEffect, useState} from 'react';
-import {Button, Card, Image, notification, Popconfirm, Select, Space, Switch, Table, Tag, Tooltip} from 'antd';
+import {Button, Card, notification, Popconfirm, Space, Switch, Table, Tag, Tooltip} from 'antd';
 import {FormOutlined, RedoOutlined} from '@ant-design/icons';
 import Constants from '@/utils/Constants';
-import Editor from '@/pages/Web/Banner/Editor';
+import Editor from '@/pages/Web/Recruit/Editor';
 import Enable from '@/components/Basic/Enable';
 import {doDelete, doEnable, doPaginate} from './service';
-import {Clients, Targets} from "@/object/web";
 import Loop from '@/utils/Loop';
 
 const Paginate: React.FC = () => {
@@ -14,11 +13,11 @@ const Paginate: React.FC = () => {
   const access = useAccess();
   const {initialState} = useModel('@@initialState');
 
-  const [search, setSearch] = useState<APIWebBanners.Search>();
-  const [editor, setEditor] = useState<APIWebBanners.Data | undefined>();
+  const [search, setSearch] = useState<APIWebRecruits.Search>();
+  const [editor, setEditor] = useState<APIWebRecruits.Data | undefined>();
   const [load, setLoad] = useState(false);
-  const [visible, setVisible] = useState<APIWebBanners.Visible>({});
-  const [data, setData] = useState<APIData.Paginate<APIWebBanners.Data>>();
+  const [visible, setVisible] = useState<APIWebRecruits.Visible>({});
+  const [data, setData] = useState<APIData.Paginate<APIWebRecruits.Data>>();
 
   const toPaginate = () => {
     setLoad(true);
@@ -31,7 +30,7 @@ const Paginate: React.FC = () => {
       .finally(() => setLoad(false));
   };
 
-  const onDelete = (record: APIWebBanners.Data) => {
+  const onDelete = (record: APIWebRecruits.Data) => {
 
     if (data?.data) {
       const temp = {...data};
@@ -61,7 +60,7 @@ const Paginate: React.FC = () => {
       });
   };
 
-  const onEnable = (record: APIWebBanners.Data) => {
+  const onEnable = (record: APIWebRecruits.Data) => {
     if (data) {
       const temp = {...data};
       if (temp.data) {
@@ -105,7 +104,7 @@ const Paginate: React.FC = () => {
     setVisible({...visible, editor: true});
   };
 
-  const onUpdate = (record: APIWebBanners.Data) => {
+  const onUpdate = (record: APIWebRecruits.Data) => {
     setEditor(record);
     setVisible({...visible, editor: true});
   };
@@ -126,24 +125,13 @@ const Paginate: React.FC = () => {
   return (
     <>
       <Card
-        title="轮播列表"
+        title="招聘列表"
         extra={
           <Space size={[10, 10]} wrap>
-            <Select
-              style={{width: '90px'}}
-              allowClear
-              placeholder='客户端'
-              onChange={client => setSearch({...search, client})}
-              value={search?.client}
-              options={[
-                {label: '电脑端', value: 'pc'},
-                {label: '移动端', value: 'mobile'},
-              ]}
-            />
             <Tooltip title="刷新">
               <Button type="primary" icon={<RedoOutlined/>} onClick={toPaginate} loading={load}/>
             </Tooltip>
-            <Access accessible={access.page('web.banner.create')}>
+            <Access accessible={access.page('web.recruit.create')}>
               <Tooltip title="创建">
                 <Button type="primary" icon={<FormOutlined/>} onClick={onCreate}/>
               </Tooltip>
@@ -165,43 +153,19 @@ const Paginate: React.FC = () => {
           }}
         >
           <Table.Column title="名称" dataIndex="name"/>
-          <Table.Column
-            title="图片"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Image src={record.picture} width='auto' height={50}/>
-            )}
-          />
-          <Table.Column
-            title="位置"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Tag color={Clients[record.client] ? Clients[record.client].color : initialState?.settings?.colorPrimary}>
-                {Clients[record.client] ? Clients[record.client].label : record.client}
-              </Tag>
-            )}
-          />
-          <Table.Column
-            title="打开"
-            align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Tag color={initialState?.settings?.colorPrimary}>
-                {Targets[record.target] ? Targets[record.target] : record.target}
-              </Tag>
-            )}
-          />
+          <Table.Column title="简介" dataIndex="summary" ellipsis/>
           <Table.Column
             title="序号"
             align="center"
-            render={(record: APIWebBanners.Data) => (
+            render={(record: APIWebRecruits.Data) => (
               <Tag color={initialState?.settings?.colorPrimary}>{record.order}</Tag>
             )}
           />
           <Table.Column
             title="启用"
             align="center"
-            render={(record: APIWebBanners.Data) => (
-              <Access accessible={access.page('web.banner.enable')}
+            render={(record: APIWebRecruits.Data) => (
+              <Access accessible={access.page('web.recruit.enable')}
                       fallback={<Enable is_enable={record.is_enable}/>}>
                 <Switch
                   size="small"
@@ -215,14 +179,14 @@ const Paginate: React.FC = () => {
           <Table.Column
             align="center"
             width={100}
-            render={(record: APIWebBanners.Data) => (
+            render={(record: APIWebRecruits.Data) => (
               <>
-                <Access accessible={access.page('web.banner.update')}>
+                <Access accessible={access.page('web.recruit.update')}>
                   <Button type="link" onClick={() => onUpdate(record)}>
                     编辑
                   </Button>
                 </Access>
-                <Access accessible={access.page('web.banner.delete')}>
+                <Access accessible={access.page('web.recruit.delete')}>
                   <Popconfirm
                     title="确定要删除该数据?"
                     placement="leftTop"

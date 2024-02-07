@@ -1,0 +1,21 @@
+.rich {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  z-index: 99;
+
+  .content {
+    height: 320px;
+  }
+}
+
+.order {
+  width: 100%;
+}
+
+.upload {
+  height: 400px;
+
+  img {
+    width: auto;
+    max-height: 398px;
+  }
+}

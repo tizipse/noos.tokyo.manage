@@ -15,12 +15,12 @@ declare namespace APIWebMember {
     nickname?: string;
     thumb?: string;
     ins?: string;
+    level?: 'delegate' | 'majordomo';
     order?: number;
     title?: string;
     keyword?: string;
     description?: string;
     content?: string;
-    is_delegate?: number;
     is_enable?: number;
   };
 
@@ -30,13 +30,13 @@ declare namespace APIWebMember {
     nickname?: string;
     thumbs?: any[];
     ins?: string;
+    level?: 'delegate' | 'majordomo';
     order?: number;
     title?: string;
     keyword?: string;
     description?: string;
     content?: string;
     text?: string;
-    is_delegate?: number;
     is_enable?: number;
   };
 

@@ -5,8 +5,8 @@ declare namespace APIWebMembers {
     name?: string;
     nickname?: string;
     title?: string;
+    level?: 'delegate' | 'majordomo';
     order?: number;
-    is_delegate?: number;
     is_enable?: number;
     created_at?: string;
     children?: Data[];

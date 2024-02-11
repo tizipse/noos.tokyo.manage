@@ -7,8 +7,8 @@ declare namespace APIWeb {
     nickname?: string;
     thumb?: string;
     ins?: string;
+    level?: 'delegate' | 'majordomo';
     order?: number;
-    is_delegate?: number;
     is_enable?: number;
     title?: string;
     keyword?: string;

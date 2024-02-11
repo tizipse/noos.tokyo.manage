@@ -117,7 +117,7 @@ const Editor: React.FC<APIWebMember.Props> = (props) => {
       title_id: values.title_id,
       ins: values.ins,
       order: values.order,
-      is_delegate: values.is_delegate,
+      level: values.level,
       is_enable: values.is_enable,
       title: values.title,
       keyword: values.keyword,
@@ -188,8 +188,8 @@ const Editor: React.FC<APIWebMember.Props> = (props) => {
         nickname: undefined,
         thumbs: undefined,
         ins: undefined,
+        level: undefined,
         order: 50,
-        is_delegate: 2,
         is_enable: 1,
         title: undefined,
         keyword: undefined,
@@ -217,7 +217,7 @@ const Editor: React.FC<APIWebMember.Props> = (props) => {
         ins: information.ins,
         order: information.order,
         thumbs: [],
-        is_delegate: information.is_delegate,
+        level: information.level,
         is_enable: information.is_enable,
         title: information.title,
         keyword: information.keyword,
@@ -345,16 +345,17 @@ const Editor: React.FC<APIWebMember.Props> = (props) => {
                       <Form.Item label="INS" name="ins" rules={[{max: 255, type: "url"}]}>
                         <Input/>
                       </Form.Item>
-                      <Form.Item label="排序" name="order" rules={[{required: true}, {type: 'number'}]}>
-                        <InputNumber min={1} max={99} controls={false} className={styles.order}/>
-                      </Form.Item>
-                      <Form.Item label="代表" name="is_delegate" rules={[{required: true}]}>
+                      <Form.Item label="级别" name="level" rules={[{required: false}]}>
                         <Select
+                          allowClear
                           options={[
-                            {label: '是', value: 1},
-                            {label: '否', value: 2},
+                            {label: '統括', value: 'majordomo'},
+                            {label: '代表', value: 'delegate'},
                           ]}
                         />
+                      </Form.Item>
+                      <Form.Item label="排序" name="order" rules={[{required: true}, {type: 'number'}]}>
+                        <InputNumber min={1} max={99} controls={false} className={styles.order}/>
                       </Form.Item>
                       <Form.Item label="启用" name="is_enable" rules={[{required: true}]}>
                         <Select
